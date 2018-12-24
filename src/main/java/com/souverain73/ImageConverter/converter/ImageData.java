@@ -11,7 +11,18 @@ public class ImageData {
         this.data = data;
     }
 
-    public String getCommand(String deviceName, String imageName){
-        return String.format("~DG%s:%s,%s,%s,%s", deviceName, imageName, totalBytes, bytesPerRow, data);
-    };
+    public String getCommand(String deviceName, String imageName) {
+        return getCommand(deviceName, imageName, false);
+    }
+
+    public String getCommand(String deviceName, String imageName, boolean formatedData) {
+        String resultingData = data;
+        String resultFormat = "~DG%s:%s,%s,%s,%s";
+        if (formatedData) {
+            String lineRegex = String.format("(.{%d})", bytesPerRow * 2);
+            resultingData = data.replaceAll(lineRegex, "$1\n");
+            resultFormat = "~DG%s:%s,%s,%s,\n%s";
+        }
+        return String.format(resultFormat, deviceName, imageName, totalBytes, bytesPerRow, resultingData);
+    }
 }

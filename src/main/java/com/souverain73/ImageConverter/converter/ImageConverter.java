@@ -14,7 +14,7 @@ public class ImageConverter {
     int density;
 
     /**
-     * @param file файл
+     * @param file    файл
      * @param width   мм
      * @param height  мм
      * @param density протность (точек/мм) default: 8
@@ -25,7 +25,7 @@ public class ImageConverter {
         this.density = density == null ? 8 : density;
         try {
             source = ImageIO.read(file);
-            if (source == null){
+            if (source == null) {
                 throw new RuntimeException("image is null");
             }
         } catch (IOException e) {
@@ -33,7 +33,7 @@ public class ImageConverter {
         }
     }
 
-    public ImageData getImageData(){
+    public ImageData getImageData() {
         BufferedImage resizedImage = resize(source, width * density, height * density);
 
         long totalBytes = width * height * density * density / 8;
@@ -52,37 +52,34 @@ public class ImageConverter {
         long tb = 0;
 
         for (int i = 0; i < height * density; i++) {
-             for (int j = 0; j < width * density; j++){
-                 imageData.getPixel(j, i, pixel);
+            for (int j = 0; j < width * density; j++) {
+                imageData.getPixel(j, i, pixel);
 
-                 boolean isBlack = ((double)(pixel[0] + pixel[1] + pixel[2])) / 3 < (255 / 2);
-
-
-                 needlePixel <<= 1;
-                 needles++;
-                 if (isBlack){
-                     needlePixel = needlePixel | 0x01;
-                 }
+                boolean isBlack = ((double) (pixel[0] + pixel[1] + pixel[2])) / 3 < (255 / 2);
 
 
+                needlePixel <<= 1;
+                needles++;
+                if (isBlack) {
+                    needlePixel = needlePixel | 0x01;
+                }
 
-                 if (needles % 8 == 0){
-                     if (needlePixel > 255){
-                         throw new IllegalStateException("Wrong half byte");
-                     }
-                     contentSb.append(String.format("%02X", needlePixel));
-                     needlePixel = 0;
-                     bytes++;
-                 }
 
-                 if (bytes != 0 && bytes % width == 0){
-                     tb += bytes + 1;
-                     bytes = 0;
-                 }
-             }
+                if (needles % 8 == 0) {
+                    if (needlePixel > 255) {
+                        throw new IllegalStateException("Wrong half byte");
+                    }
+                    contentSb.append(String.format("%02X", needlePixel));
+                    needlePixel = 0;
+                    bytes++;
+                }
+
+                if (bytes != 0 && bytes % width == 0) {
+                    tb += bytes + 1;
+                    bytes = 0;
+                }
+            }
         }
-        System.out.println("tb = " + tb);
-        System.out.println("needles = " + needles);
         return new ImageData(totalBytes, bytesPerRow, contentSb.toString());
     }
 
