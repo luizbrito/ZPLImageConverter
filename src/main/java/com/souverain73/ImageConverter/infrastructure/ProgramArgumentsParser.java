@@ -1,4 +1,4 @@
-package com.souverain73.ImageConverter;
+package com.souverain73.ImageConverter.infrastructure;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,7 @@ public class ProgramArgumentsParser {
         this.config = config;
     }
 
-    Map<String, Object> parseParams(String[] args){
+    public Map<String, Object> parseParams(String[] args){
         HashMap<String, Object> result = new HashMap<>();
         String key = null;
         String value = null;
@@ -25,11 +25,11 @@ public class ProgramArgumentsParser {
                 key = arg;
                 value = args[++i];
             }
+
+            ArgumentsConfigItem item = getConfigItem(key);
+
+            result.put(item.getInternalName(), item.parseValue(value));
         }
-
-        ArgumentsConfigItem item = getConfigItem(key);
-
-        result.put(item.getInternalName(), item.parseValue(value));
 
         return result;
     }

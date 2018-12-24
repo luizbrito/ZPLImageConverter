@@ -1,4 +1,4 @@
-package com.souverain73.ImageConverter;
+package com.souverain73.ImageConverter.infrastructure;
 
 import java.util.Arrays;
 import java.util.Collection;
